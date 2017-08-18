@@ -12,10 +12,11 @@ class sye(scrapy.Spider):
 
     name = "sye"
 
+    __wanna_sim_numbers = 100
     __get_id_list_url = "https://stye.sourceaudio.com/ajax.php?p=track_info&o=release_date&d=d&show=50&pg={}&no=title&req=1"
     __search_url      = "https://stye.sourceaudio.com/ajax.php?p=track_info&s={}&show=50&req=1"
     __detail_info_url = "https://stye.sourceaudio.com/ajax.php?p=track_info&customs=1&id={}"
-    __sim_tracks_url  = "https://stye.sourceaudio.com/ajax.php?p=track_info&sim={}&show=100&req=1"
+    __sim_tracks_url  = "https://stye.sourceaudio.com/ajax.php?p=track_info&sim={}&show=50&page={}&req=1"
     __headers         = {"Host": "stye.sourceaudio.com", "Connection": "keep-alive", "Pragma": "no-cache", "Cache-Control": "no-cache", "Upgrade-Insecure-Requests": "1", "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8", "Accept-Encoding": "deflate, br", "Accept-Language": "en,zh-CN;q=0.8,zh;q=0.6"}
 
     def start_requests(self):
@@ -91,18 +92,20 @@ class sye(scrapy.Spider):
             yield track_detail_info
         '''
 
-        req = Request(
-                url = self.__sim_tracks_url.format(urllib.quote(utf8(str(response.meta['track_id'])))),
-                headers = self.__headers,
-                meta = {
-                    'track_id': response.meta['track_id'],
-                    'track_detail_info': track_detail_info,
-                    
-                    },
+        self.track_id = response.meta['track_id']
+        self.sim_tracks_info_list = []
+        self.track_detail_info    = track_detail_info
 
-                callback = self.deal_with_sim_tracks_list,
-                )
+        for page_index in xrange(self.__wanna_sim_numbers / 50):
+            req = Request(
+                    url = self.__sim_tracks_url.format(urllib.quote(utf8(str(response.meta['track_id']))), urllib.quote(utf8(str(page_index)))),
+                    headers = self.__headers,
+                    meta = {
 
+                        },
+                    callback = self.deal_with_sim_tracks_list,
+                    )
+    
         yield req
 
     def deal_with_sim_tracks_list(self, response):
@@ -117,13 +120,14 @@ class sye(scrapy.Spider):
                 'data': data,
                 }
 
-        track_detail_info = response.meta['track_detail_info']
-
-        result = {
-                'track_id': response.meta['track_id'],
-                'detail_info': track_detail_info,
-                'sim_tracks_list': sim_tracks_list,
+        self.sim_tracks_info_list.append(sim_tracks_list) 
+        
+        if len(self.sim_tracks_info_list) == self.__wanna_sim_numbers / 50:
+            result = {
+                'track_id': self.track_id,
+                'detail_info': self.track_detail_info,
+                'sim_tracks_list': self.sim_tracks_info_list,
                 
                 }
 
-        yield result
+            yield result
