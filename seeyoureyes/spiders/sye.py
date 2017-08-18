@@ -3,8 +3,6 @@
 import json
 import urllib
 
-from tornado.escape import utf8, to_unicode
-
 import scrapy
 from scrapy import Request
 
@@ -24,7 +22,7 @@ class sye(scrapy.Spider):
         track_page_range = xrange(0, 324)
 
         for page_index in track_page_range:
-            search_url = self.__get_id_list_url.format(urllib.quote(utf8(str(page_index))))
+            search_url = self.__get_id_list_url.format(urllib.quote(str(page_index)))
             req = Request(
                     url = search_url,
                     headers = self.__headers,
@@ -41,7 +39,7 @@ class sye(scrapy.Spider):
         track_names = []
 
         for track_name in track_names:
-            search_url = self.__search_url.format(urllib.quote(utf8(track_name)))
+            search_url = self.__search_url.format(urllib.quote(track_name))
             req = Request(
                     url = search_url,
                     headers = self.__headers,
@@ -66,7 +64,7 @@ class sye(scrapy.Spider):
         for track_id in ids:
 
             req = Request(
-                    url = self.__detail_info_url.format(urllib.quote(utf8(str(track_id)))),
+                    url = self.__detail_info_url.format(urllib.quote(str(track_id))),
                     headers = self.__headers,
                     meta = {
                         'track_id': track_id, 
@@ -98,7 +96,7 @@ class sye(scrapy.Spider):
 
         for page_index in xrange(self.__wanna_sim_numbers / 50):
             req = Request(
-                    url = self.__sim_tracks_url.format(urllib.quote(utf8(str(response.meta['track_id']))), urllib.quote(utf8(str(page_index)))),
+                    url = self.__sim_tracks_url.format(urllib.quote(str(response.meta['track_id'])), urllib.quote(str(page_index))),
                     headers = self.__headers,
                     meta = {
 
