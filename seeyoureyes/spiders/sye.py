@@ -19,7 +19,7 @@ class sye(scrapy.Spider):
 
     def start_requests(self):
 
-        track_page_range = xrange(0, 324)
+        track_page_range = xrange(0, 1) # 324)
 
         for page_index in track_page_range:
             search_url = self.__get_id_list_url.format(urllib.quote(str(page_index)))
@@ -67,13 +67,13 @@ class sye(scrapy.Spider):
                     url = self.__detail_info_url.format(urllib.quote(str(track_id))),
                     headers = self.__headers,
                     meta = {
-                        'track_id': track_id, 
-    
+                        'track_id': track_id,
+
                         },
                     callback = self.deal_with_detail_info,
                     )
             yield req
-    
+
     def deal_with_detail_info(self, response):
         if response.status not in [200, ]:
             pass
@@ -85,25 +85,24 @@ class sye(scrapy.Spider):
         track_detail_info = {
                 'data': data,
                 }
-        
+
         ''' return track detail info
             yield track_detail_info
         '''
 
-        self.track_id = response.meta['track_id']
-        self.sim_tracks_info_list = []
-        self.track_detail_info    = track_detail_info
+        sim_page_indexes = range(self.__wanna_sim_numbers / 50)
+        req = Request(
+                url = self.__sim_tracks_url.format(urllib.quote(str(response.meta['track_id'])), urllib.quote(str(sim_page_indexes[0]))),
+                headers = self.__headers,
+                meta = {
+                    'track_id': response.meta['track_id'],
+                    'detail_info': track_detail_info,
+                    'sim_page_indexes': sim_page_indexes,
+                    'sim_tracks_lists': [],
+                    },
+                callback = self.deal_with_sim_tracks_list,
+                )
 
-        for page_index in xrange(self.__wanna_sim_numbers / 50):
-            req = Request(
-                    url = self.__sim_tracks_url.format(urllib.quote(str(response.meta['track_id'])), urllib.quote(str(page_index))),
-                    headers = self.__headers,
-                    meta = {
-
-                        },
-                    callback = self.deal_with_sim_tracks_list,
-                    )
-    
         yield req
 
     def deal_with_sim_tracks_list(self, response):
@@ -118,14 +117,34 @@ class sye(scrapy.Spider):
                 'data': data,
                 }
 
-        self.sim_tracks_info_list.append(sim_tracks_list) 
-        
-        if len(self.sim_tracks_info_list) == self.__wanna_sim_numbers / 50:
+        sim_tracks_lists = response.meta['sim_tracks_lists']
+        sim_tracks_lists.append(sim_tracks_list)
+
+        sim_page_indexes = response.meta['sim_page_indexes']
+        del sim_page_indexes[0]
+
+        if len(sim_page_indexes) == 0:
             result = {
-                'track_id': self.track_id,
-                'detail_info': self.track_detail_info,
-                'sim_tracks_list': self.sim_tracks_info_list,
-                
+                'track_id': response.meta['track_id'],
+                'detail_info': response.meta['detail_info'],
+                'sim_tracks_list': sim_tracks_lists,
+
                 }
 
             yield result
+
+        else:
+            req = Request(
+                    url = self.__sim_tracks_url.format(urllib.quote(str(response.meta['track_id'])), urllib.quote(str(sim_page_indexes[0]))),
+                    headers = self.__headers,
+                    meta = {
+                        'track_id': response.meta['track_id'],
+                        'detail_info': response.meta['detail_info'],
+                        'sim_page_indexes': sim_page_indexes,
+                        'sim_tracks_lists': sim_tracks_lists,
+
+                        },
+                    callback = self.deal_with_sim_tracks_list,
+                    )
+            yield req
+
