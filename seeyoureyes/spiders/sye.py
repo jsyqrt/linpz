@@ -19,7 +19,7 @@ class sye(scrapy.Spider):
 
     def start_requests(self):
 
-        track_page_range = xrange(0, 1) # 324)
+        track_page_range = xrange(0, 324)
 
         for page_index in track_page_range:
             search_url = self.__get_id_list_url.format(urllib.quote(str(page_index)))
