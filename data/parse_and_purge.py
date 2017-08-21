@@ -27,7 +27,7 @@ def parse_a_line(line):
             description = tdi.get('description', ''),
 
             date = tdi.get('date', ''),
-            lenght = tdi.get('length', ''),
+            length = tdi.get('length', ''),
 
             sim_tracks = get_sim_track_list(tsl)
             
