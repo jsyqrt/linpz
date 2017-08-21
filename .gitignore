@@ -5,4 +5,5 @@
 data/*.json
 data/*.pyc
 data/*.txt
-data/*.sql
+data/tracks.sql
+data/sim_tracks.sql
