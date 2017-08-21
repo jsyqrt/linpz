@@ -14,7 +14,7 @@ def parse_a_line(line):
             id = tid,
 
             name = tdi.get('title', ''),
-            artist = tdi.get('artist', {}).get('name', '') + ', ' + tdi.get('artist', {}).get('description', ''),
+            artist = tdi.get('artist', {}).get('name', '') # + ', ' + tdi.get('artist', {}).get('description', ''),
             album = tdi.get('album', {}).get('name', ''),
 
             composer = tdi.get('composer', {}).get('name', ''),
@@ -33,9 +33,17 @@ def parse_a_line(line):
 def get_sim_track_list(tsl):
     sim_tracks = list(map(lambda x: x.get('data', {}).get('content', []), tsl))
     sim_tracks.sort(key = lambda x: x[0].get('page', -1))
-    return list(map(lambda x: {'id': x.get('id', -1), 'name': x.get('title', ''), 'album': x.get('album', {}).get('name', ''),\
-           'artist': x.get('artist', {}).get('name', '') + ', ' + x.get('artist', {}).get('description', ''),},\
-            reduce(lambda x, y: x[1:]+y[1:], sim_tracks)))
+    return list(
+            map(
+                lambda x: {
+                    'id': x.get('id', -1),
+                    'name': x.get('title', ''),
+                    'album': x.get('album', {}).get('name', ''),
+                    'artist': x.get('artist', {}).get('name', ''), # + ', ' + x.get('artist', {}).get('description', ''),
+                    },
+                reduce(lambda x, y: x[1:]+y[1:], sim_tracks)
+                )
+            )
 
 def read_parse_and_save(from_file_name, to_file_name):
     with open(to_file_name, 'w') as tt:
