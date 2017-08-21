@@ -14,8 +14,8 @@ def parse_a_line(line):
             id = tid,
 
             name = tdi.get('title', ''),
-            artist = tdi.get('artist', {}).get('name', '') # + ', ' + tdi.get('artist', {}).get('description', ''),
             album = tdi.get('album', {}).get('name', ''),
+            artist = tdi.get('artist', {}).get('name', '') # + ', ' + tdi.get('artist', {}).get('description', ''),
 
             composer = tdi.get('composer', {}).get('name', ''),
             catalog = tdi.get('catalog', {}).get('name', ''),
@@ -24,6 +24,9 @@ def parse_a_line(line):
             genre = ', '.join(list(map(lambda x: x.get('name', ''), tdi.get('genre', [])))),
             cue_type = ', '.join(list(map(lambda x: x.get('name', ''), tdi.get('musicProviderCueTypes', [])))),
             description = tdi.get('description', ''),
+
+            date = tdi.get('date', ''),
+            lenght = tdi.get('length', ''),
 
             sim_tracks = get_sim_track_list(tsl)
             
