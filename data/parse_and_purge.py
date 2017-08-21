@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import division
 import json
 
 def parse_a_line(line):
@@ -15,7 +16,7 @@ def parse_a_line(line):
 
             name = tdi.get('title', ''),
             album = tdi.get('album', {}).get('name', ''),
-            artist = tdi.get('artist', {}).get('name', '') # + ', ' + tdi.get('artist', {}).get('description', ''),
+            artist = tdi.get('artist', {}).get('name', ''), # + ', ' + tdi.get('artist', {}).get('description', ''),
 
             composer = tdi.get('composer', {}).get('name', ''),
             catalog = tdi.get('catalog', {}).get('name', ''),
@@ -43,6 +44,7 @@ def get_sim_track_list(tsl):
                     'name': x.get('title', ''),
                     'album': x.get('album', {}).get('name', ''),
                     'artist': x.get('artist', {}).get('name', ''), # + ', ' + x.get('artist', {}).get('description', ''),
+
                     },
                 reduce(lambda x, y: x[1:]+y[1:], sim_tracks)
                 )
@@ -59,8 +61,9 @@ def read_parse_and_save(from_file_name, to_file_name):
             with open(to_file_name, 'a') as tt:
                 tdi = parse_a_line(line)
                 tt.write(json.dumps(tdi)+',\n')
+            line_index += 1
             if line_index % 50 == 0:
-                print '\r %d \% finished!' (line_index / (324 * 50)) * 100 
+                print '%d %% finished!' %((line_index / (324 * 50)) * 100)
     with open(to_file_name, 'a') as tt:
         tt.write(']')
 
