@@ -49,6 +49,7 @@ def get_sim_track_list(tsl):
             )
 
 def read_parse_and_save(from_file_name, to_file_name):
+    line_index = 0
     with open(to_file_name, 'w') as tt:
         tt.write('[\n')
     with open(from_file_name, 'r') as ff:
@@ -58,6 +59,8 @@ def read_parse_and_save(from_file_name, to_file_name):
             with open(to_file_name, 'a') as tt:
                 tdi = parse_a_line(line)
                 tt.write(json.dumps(tdi)+',\n')
+            if line_index % 50 == 0:
+                print '\r %d \% finished!' (line_index / (324 * 50)) * 100 
     with open(to_file_name, 'a') as tt:
         tt.write(']')
 
