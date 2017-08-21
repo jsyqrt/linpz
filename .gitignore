@@ -2,4 +2,7 @@
 *.out
 *.pyc
 *.txt
-data/*
+data/*.json
+data/*.pyc
+data/*.txt
+data/*.sql

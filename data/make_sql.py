@@ -47,7 +47,12 @@ def extract_json_to_sql_and_insert_into_sql_file(line, sql_file_name, json_to_sq
     with open(sql_file_name, 'a') as f:
         f.write(sql)
 
-def start_write_to_sql_file(result_file_name, sql_file_name, json_to_sql_func):
+def write_to_sql_header(sql_file_name, sql_header):
+    with open(sql_file_name, 'w') as f:
+        f.write(sql_header)
+
+def start_write_to_sql_file(result_file_name, sql_file_name, json_to_sql_func, sql_header):
+    write_to_sql_header(sql_file_name, sql_header)
     with open(result_file_name, 'r') as ff:
         for line in ff:
             if line in ['[\n', ']']:
@@ -61,5 +66,7 @@ if __name__ == '__main__':
     from_file = 'result.json'
     tracks_sql_file = 'tracks.sql'
     sim_tracks_file = 'sim_tracks.sql'
-    # start_write_to_sql_file(from_file, tracks_sql_file, extract_track_detail_info_from_json_to_sql)
-    start_write_to_sql_file(from_file, sim_tracks_file, extract_sim_tracks_relation_from_json_to_sql)
+
+    sql_headers = ('use songs_to_your_eyes;\ninsert into tracks\nvalues\n', 'use songs_to_your_eyes;\ninsert into sim_tracks\nvalues\n')
+    start_write_to_sql_file(from_file, tracks_sql_file, extract_track_detail_info_from_json_to_sql, sql_headers[0])
+    start_write_to_sql_file(from_file, sim_tracks_file, extract_sim_tracks_relation_from_json_to_sql, sql_headers[1])
