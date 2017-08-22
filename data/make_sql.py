@@ -21,7 +21,7 @@ def extract_sim_tracks_relation_from_json_to_sql(json_string):
 
 def extract_track_detail_info_from_json_to_sql(json_string):
     x = json_string
-    sql = str(x['id']) + ', ' + ', '.join(list(map(lambda x: '"%s"'%x,
+    sql = str(x['id']) + ', ' + ', '.join(list(map(lambda x: '"%s"'%x.replace('"', '\\"'),
         [
             x['name'],
             x['album'],
@@ -52,6 +52,7 @@ def write_to_sql_header(sql_file_name, sql_header):
         f.write(sql_header)
 
 def start_write_to_sql_file(result_file_name, sql_file_name, json_to_sql_func, sql_header):
+    print 'read from %s, write to %s...' %(result_file_name, sql_file_name)
     write_to_sql_header(sql_file_name, sql_header)
     with open(result_file_name, 'r') as ff:
         for line in ff:
