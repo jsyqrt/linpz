@@ -24,7 +24,7 @@ CREATE TABLE sim_tracks(
     sim_to_id INT NOT NULL,
     sim_index INT NOT NULL,
     PRIMARY KEY (id, sim_to_id),
-    FOREIGN KEY (id) REFERENCES tracks(id)
+    FOREIGN KEY (id) REFERENCES tracks(id),
     FOREIGN KEY (sim_to_id) REFERENCES tracks(id)
 );
 
