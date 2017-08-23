@@ -32,8 +32,6 @@ class Track(Base):
     catalog = Column(String(1000))
     composer = Column(String(1000))
     genre = Column(String(1000))
-
-    # sim_ids = relationship('Sim_Track', backref='songs_to_your_eyes_tracks', lazy='dynamic')
     
     def __repr__(self):
         return "<Track(id='%s', name='%s', album='%s', artist='%s')>" % (
@@ -59,13 +57,10 @@ def get_sim_tracks(track_id=None, track_name=None, session=None):
         return session.query(Track).join(Sim_Track, Track.id==Sim_Track.sim_to_id).filter(Sim_Track.sim_from_id == track_id).order_by(Sim_Track.sim_index).all()
 
 if __name__ == '__main__':
-    engine = create_engine('mysql+pymysql://localhost/rainbow')#, echo=True)
+    engine = create_engine('mysql+pymysql://root:root@192.168.0.13/rainbow')#, echo=True)
     # engine = create_engine('sqlite:///:memory:', echo=True)
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # query some.
-    #for i in get_sim_tracks(track_id=10792495, session=session):
-    #    print i
     print get_track(track_id=10792495,session=session)
