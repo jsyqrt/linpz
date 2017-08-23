@@ -1,7 +1,7 @@
 
-use songs_to_your_eyes;
+use rainbow;
 
-CREATE TABLE tracks(
+CREATE TABLE songs_to_your_eyes_tracks(
     id INT NOT NULL,
     name VARCHAR(500) NOT NULL,
     album VARCHAR(500) NOT NULL,
@@ -19,12 +19,12 @@ CREATE TABLE tracks(
     PRIMARY KEY (id)
 );
 
-CREATE TABLE sim_tracks(
+CREATE TABLE songs_to_your_eyes_sim_tracks(
     id INT NOT NULL,
     sim_to_id INT NOT NULL,
     sim_index INT NOT NULL,
-    PRIMARY KEY (id, sim_to_id),
-    FOREIGN KEY (id) REFERENCES tracks(id),
+    PRIMARY KEY (id),
+    FOREIGN KEY (sim_from_id) REFERENCES tracks(id),
     FOREIGN KEY (sim_to_id) REFERENCES tracks(id)
 );
 
