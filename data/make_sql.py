@@ -68,6 +68,6 @@ if __name__ == '__main__':
     tracks_sql_file = 'tracks.sql'
     sim_tracks_file = 'sim_tracks.sql'
 
-    sql_headers = ('use songs_to_your_eyes;\ninsert into tracks\nvalues\n', 'use songs_to_your_eyes;\ninsert into sim_tracks\nvalues\n')
+    sql_headers = ('use songs_to_your_eyes;\ninsert into tracks\nvalues\n', 'use songs_to_your_eyes;\ninsert into sim_tracks (sim_from_id, sim_to_id, sim_index) \nvalues\n')
     start_write_to_sql_file(from_file, tracks_sql_file, extract_track_detail_info_from_json_to_sql, sql_headers[0])
     start_write_to_sql_file(from_file, sim_tracks_file, extract_sim_tracks_relation_from_json_to_sql, sql_headers[1])

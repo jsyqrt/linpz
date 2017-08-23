@@ -9,10 +9,11 @@ Base = declarative_base()
 
 class Sim_Track(Base):
     __tablename__ = 'sim_tracks'
-
-    id = Column('id', Integer, primary_key=True)
-    sim_to_id = Column('sim_to_id', Integer, ForeignKey('tracks.id'), primary_key=True)
-    sim_index = Column('sim_index', Integer)
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sim_from_id = Column(Integer, ForeignKey('tracks.id'))
+    sim_to_id = Column(Integer, ForeignKey('tracks.id'))
+    sim_index = Column(Integer)
 
 class Track(Base):
     __tablename__ = 'tracks'
@@ -32,7 +33,7 @@ class Track(Base):
     composer = Column(String(1000))
     genre = Column(String(1000))
 
-    sim_ids = relationship('Sim_Track', backref='tracks', lazy='dynamic')
+    sims = relationship('Track', secondary=Sim_Track, backref=backref('tracks', lazy='dynamic'))
     
     def __repr__(self):
         return "<Track(id='%s', name='%s', album='%s', artist='%s')>" % (
@@ -45,15 +46,15 @@ def get_sim_tracks(track_id=None, track_name=None, session=None):
     if track_name:
         track_id = session.query(Track.id).filter(Track.name == track_name).first()[0]
     if track_id:
-        return session.query(Track).join(Sim_Track, Track.id==Sim_Track.sim_to_id).filter(Sim_Track.id == track_id).order_by(Sim_Track.sim_index).all()
+        return session.query(Track).join(Sim_Track, Track.id==Sim_Track.sim_to_id).filter(Sim_Track.sim_from_id == track_id).order_by(Sim_Track.sim_index).all()
 
 if __name__ == '__main__':
     engine = create_engine('mysql+pymysql://localhost/songs_to_your_eyes')#, echo=True)
     # engine = create_engine('sqlite:///:memory:', echo=True)
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
     # query some.
-    for i in get_sim_tracks(track_id=10792495, session=session):
-        print i
+    # for i in get_sim_tracks(track_id=10792495, session=session):
+    #    print i

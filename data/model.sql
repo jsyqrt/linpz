@@ -21,10 +21,12 @@ CREATE TABLE tracks(
 
 CREATE TABLE sim_tracks(
     id INT NOT NULL,
+    
+    sim_from_id INT NOT NULL,
     sim_to_id INT NOT NULL,
     sim_index INT NOT NULL,
-    PRIMARY KEY (id, sim_to_id),
-    FOREIGN KEY (id) REFERENCES tracks(id),
+    PRIMARY KEY (id),
+    FOREIGN KEY (sim_from_id) REFERENCES tracks(id),
     FOREIGN KEY (sim_to_id) REFERENCES tracks(id)
 );
 
